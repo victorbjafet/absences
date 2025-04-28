@@ -38,17 +38,31 @@
   
     // 3) open a popup and load your existing popup.html + popup.js
     const base = 'https://raw.githubusercontent.com/victorbjafet/absences/main/absences_bookmarklet';
-    fetch(`${base}/popup.html`)
-      .then(r => r.text())
-      .then(html => {
-        // point its <script src="popup.js"> to your GitHub raw file
-        const mod = html.replace(
-          /<script\s+src=["']popup\.js["']><\/script>/,
-          `<script src="${base}/popup.js"></script>`
-        );
-        const pop = window.open('', '_blank', 'width=600,height=700');
-        pop.document.write(mod);
-        pop.document.close();
-      });
+    (function() {
+        // … scraping logic as before …
+      
+        // 3) open popup, fetch both HTML + JS, then inject JS inline
+        const base = 'https://raw.githubusercontent.com/victorbjafet/absences/main/absences_extension';
+      
+        Promise.all([
+          fetch(`${base}/popup.html`).then(r => r.text()),
+          fetch(`${base}/popup.js`).then(r => r.text())
+        ]).then(([html, js]) => {
+          // remove the old <script src="popup.js"></script> line
+          const cleanHtml = html.replace(
+            /<script\s+src=["']popup\.js["']>\s*<\/script>/,
+            ''
+          );
+      
+          const pop = window.open('', '_blank', 'width=600,height=700');
+          pop.document.write(cleanHtml);
+          pop.document.close();
+      
+          // now inject your popup.js code inline
+          const scriptEl = pop.document.createElement('script');
+          scriptEl.textContent = js;
+          pop.document.head.appendChild(scriptEl);
+        });
+      })();
   })();
   
