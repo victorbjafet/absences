@@ -1,0 +1,1 @@
+javascript: fetch("https://raw.githubusercontent.com/victorbjafet/absences/refs/heads/main/absences_bookmarklet/content.js").then(r => r.text()).then(r => eval(r))

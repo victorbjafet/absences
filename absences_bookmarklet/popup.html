@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Skyward Attendance Scraper</title>
+  <style>
+    /* … your existing styles … */
+  </style>
+</head>
+<body>
+  <h2>Skyward Attendance Scraper</h2>
+
+  <div class="date-section">
+    From: <input type="date" id="start-date"><br>
+    To:   <input type="date" id="end-date">
+  </div>
+
+  <div class="filter-section">
+    <div>
+      <input type="radio" name="mainFilter" id="absences" value="absences" checked>
+      <label for="absences"><b>Absences</b></label>
+      <input type="radio" name="mainFilter" id="tardies" value="tardies">
+      <label for="tardies"><b>Tardies</b></label>
+    </div>
+    <div class="filters-group" id="subFilters"></div>
+    <div style="margin-top:10px;">
+      <input type="checkbox" id="show-class-names">
+      <label for="show-class-names">Show Class Names (unreliable)</label>
+    </div>
+  </div>
+
+  <!-- scrape button removed; we auto-scrape on load -->
+
+  <div id="absences-remaining" style="text-align:center;font-size:17px;margin-top:10px;"></div>  
+  <div id="periods"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
