@@ -1,0 +1,1 @@
+this is for the old python script version: open skyward, go to attendance tab, open inspect element (ctrl shift i), open network tab, reload page, select the first thing that shows up in the list when u reload, click response tab, copy everything, paste here (remove this text), save this file, then run the program
