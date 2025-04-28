@@ -6,6 +6,7 @@ const defaultSubFilters = {
 
 
 document.addEventListener('DOMContentLoaded', async () => {
+    document.getElementById('show-class-names').addEventListener('change', loadAndDisplayData);
     document.querySelectorAll('input[name="mainFilter"]').forEach(radio => {
         radio.addEventListener('change', () => {
             setupSubFilters();    // <- re-render subfilters when switching
@@ -155,7 +156,13 @@ function loadAndDisplayData() {
             button.style.color = 'black';
 
             const label = (mainFilter === 'tardies') ? 'tardies' : 'missed';
-            button.textContent = `Period ${p} (${periodData.className}) \u2013 ${periodData.dates.length} ${label}`;
+            const showClassNames = document.getElementById('show-class-names').checked;
+            if (showClassNames) {
+                button.textContent = `Period ${p} (${periodData.className}) \u2013 ${periodData.dates.length} ${label}`;
+            } else {
+                button.textContent = `Period ${p} \u2013 ${periodData.dates.length} ${label}`;
+            }
+
 
             const datesDiv = document.createElement('div');
             datesDiv.className = 'dates';
