@@ -44,7 +44,7 @@
     window._absencesData = { missedData, classNames };
   
     // 3) open a popup and load your existing popup.html + popup.js
-    const base = 'https://raw.githubusercontent.com/victorbjafet/absences/main/absences_bookmarklet';
+    const base = 'https://raw.githubusercontent.com/victorbjafet/absences/main';
   Promise.all([
     fetch(`${base}/popup.html`).then(r => r.text()),
     fetch(`${base}/popup.js`).then(r => r.text())
