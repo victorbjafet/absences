@@ -5,81 +5,109 @@
     <style>
         body {
             width: 600px;
-            /* height: 700px; */
+            margin: 10px auto;
             font-family: Arial, sans-serif;
-            margin: 10px;
             background: linear-gradient(to bottom, #e8f0fc, #ffffff);
+            text-align: center; /* center everything by default */
         }
 
         h2 {
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            text-align: center;
         }
-        button, label {
-            margin-top: 5px;
-            margin-bottom: 5px;
+
+        .date-section {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
         }
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #3366cc;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+
+        input[type='date'] {
+            padding: 5px;
+            width: 140px;
         }
-        button:hover {
-            background-color: #254b99;
-        }
-        .filter-section, .date-section {
+
+        .filter-section {
             background: #ffffff;
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 8px;
+            display: inline-block;
+            text-align: left;
         }
+
+        .filter-section > div:first-child {
+            margin-bottom: 10px;
+        }
+
         .filters-group {
             display: flex;
-            gap: 10px;
+            justify-content: center;
+            gap: 15px;
             flex-wrap: wrap;
+            margin-bottom: 10px;
         }
+
+        label {
+            margin-right: 5px;
+        }
+
+        #show-class-names {
+            margin-left: 5px;
+        }
+
+        #absences-remaining {
+            font-size: 17px;
+            margin: 10px 0;
+        }
+
         .period-button {
-            width: 100%;
+            width: 90%;
+            max-width: 550px;
             text-align: left;
             padding: 8px;
             background-color: #ffffff;
             border: 1px solid #ccc;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 5px;
+            margin: 5px auto;
             transition: all 0.3s ease;
         }
+
         .period-button:hover {
             background-color: #dce6f7;
         }
+
         .dates {
-            margin-left: 10px;
+            margin: 0 auto 10px;
             font-size: 14px;
-            color: black; /* <-- black text! */
+            color: black;
             overflow: hidden;
             transition: max-height 0.4s ease-out;
             max-height: 0;
+            width: 90%;
+            max-width: 550px;
+            text-align: left;
         }
+
         .dates.show {
             max-height: 500px;
-        }
-        input[type='date'] {
-            width: 48%;
-            padding: 5px;
         }
     </style>
 </head>
 <body>
-    <h2 style="text-align: center;">Skyward Attendance Scraper</h2>
+    <h2>Skyward Attendance Scraper</h2>
 
     <div class="date-section">
-        From: <input type="date" id="start-date"> <br>
-        To: <input type="date" id="end-date">
+        <div>
+            <label for="start-date"><strong>From:</strong></label><br>
+            <input type="date" id="start-date">
+        </div>
+        <div>
+            <label for="end-date"><strong>To:</strong></label><br>
+            <input type="date" id="end-date">
+        </div>
     </div>
 
     <div class="filter-section">
@@ -90,13 +118,13 @@
             <label for="tardies"><b>Tardies</b></label>
         </div>
         <div class="filters-group" id="subFilters"></div>
-        <div style="margin-top: 10px;">
+        <div>
             <input type="checkbox" id="show-class-names">
             <label for="show-class-names">Show Class Names (unreliable)</label>
         </div>
     </div>
 
-    <div id="absences-remaining" style="text-align: center; font-size: 17px; margin-top: 10px;"></div>  
+    <div id="absences-remaining"></div>
 
     <div id="periods"></div>
 
