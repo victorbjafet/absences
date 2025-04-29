@@ -57,10 +57,10 @@ https://github.com/user-attachments/assets/1b788057-cdb0-4e08-9615-975944a6644d
 
 
 ### iPad (Chrome app) tutorial:
-
-
+https://github.com/user-attachments/assets/6c0605d3-6c90-40a1-be35-6f4a8ed8dee1
 
 Note: this works on the iPhone Chrome app too.
+
 
 ## Credits:
 All code created by [me](https://github.com/victorbjafet) almost exclusively using GPT 4o and GPT 4o-mini-high.
