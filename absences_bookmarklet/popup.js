@@ -60,15 +60,25 @@ const defaultSubFilters = {
   function classify(entry) {
     const t = entry.attendance.toLowerCase();
     if (t.includes('tardy')) {
-      return {
-        type:   'tardy',
-        status: t.includes('excused') ? 'excused' : 'unexcused'
-      };
+      // For tardies, check unexcused first (so "unexcused" doesn't get mistaken as "excused")
+      if (t.includes('unexcused')) {
+        return { type: 'tardy', status: 'unexcused' };
+      } else if (t.includes('excused')) {
+        return { type: 'tardy', status: 'excused' };
+      } else {
+        return { type: 'tardy', status: 'unexcused' };
+      }
     } else {
-      if (t.includes('unexcused'))   return { type:'absence', status:'unexcused' };
-      if (t.includes('activity'))    return { type:'absence', status:'activity' };
-      if (t.includes('excused'))     return { type:'absence', status:'excused' };
-      return { type:'absence', status:'unexcused' };
+      // Absences
+      if (t.includes('unexcused')) {
+        return { type: 'absence', status: 'unexcused' };
+      } else if (t.includes('activity')) {
+        return { type: 'absence', status: 'activity' };
+      } else if (t.includes('excused')) {
+        return { type: 'absence', status: 'excused' };
+      } else {
+        return { type: 'absence', status: 'unexcused' };
+      }
     }
   }
   
