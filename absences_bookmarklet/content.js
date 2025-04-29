@@ -1,4 +1,11 @@
-(function() {
+(function init() {
+    // Only run on the Skyward attendance page
+    const allowRe = /^https:\/\/skyward\.iscorp\.com\/scripts\/wsisa\.dll\/WService=wseduamericanheritagefl\/sfattendance001\.w/;
+    if (!allowRe.test(window.location.href)) {
+        alert("This bookmarklet only works on Skyward's attendance history page.");
+        return;
+    }
+
     // 1) scrape the attendance table & class names
     const table = document.querySelector('table[id^="grid_attendanceHistory"]');
     if (!table) {
