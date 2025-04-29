@@ -1,6 +1,9 @@
 // popup.js — loads scraped data from opener and renders UI
 
 // Default sub-filters for absence/tardy types
+console.log("popup.js loaded");
+
+
 const defaultSubFilters = {
     absences: ['excused', 'unexcused'],
     tardies:  ['excused', 'unexcused']

@@ -37,32 +37,26 @@
     window._absencesData = { missedData, classNames };
   
     // 3) open a popup and load your existing popup.html + popup.js
-    const base = 'https://raw.githubusercontent.com/victorbjafet/absences/main/absences_bookmarklet';
-    (function() {
-        // … scraping logic as before …
-      
-        // 3) open popup, fetch both HTML + JS, then inject JS inline
-        const base = 'https://raw.githubusercontent.com/victorbjafet/absences/main/absences_extension';
-      
-        Promise.all([
-          fetch(`${base}/popup.html`).then(r => r.text()),
-          fetch(`${base}/popup.js`).then(r => r.text())
-        ]).then(([html, js]) => {
-          // remove the old <script src="popup.js"></script> line
-          const cleanHtml = html.replace(
-            /<script\s+src=["']popup\.js["']>\s*<\/script>/,
-            ''
-          );
-      
-          const pop = window.open('', '_blank', 'width=600,height=700');
-          pop.document.write(cleanHtml);
-          pop.document.close();
-      
-          // now inject your popup.js code inline
-          const scriptEl = pop.document.createElement('script');
-          scriptEl.textContent = js;
-          pop.document.head.appendChild(scriptEl);
-        });
-      })();
-  })();
+    const base = 'https://raw.githubusercontent.com/victorbjafet/absences/main/absences_extension';
+  Promise.all([
+    fetch(`${base}/popup.html`).then(r => r.text()),
+    fetch(`${base}/popup.js`).then(r => r.text())
+  ]).then(([html, js]) => {
+    // remove the old <script src="popup.js"></script>
+    const cleanHtml = html.replace(
+      /<script\s+src=["']popup\.js["']>\s*<\/script>/,
+      ''
+    );
+
+    // inject the JS just before </body>
+    const finalHtml = cleanHtml.replace(
+      /<\/body>/i,
+      `<script>\n${js}\n</script>\n</body>`
+    );
+
+    const pop = window.open('', '_blank', 'width=600,height=700');
+    pop.document.write(finalHtml);
+    pop.document.close();
+  });
+})();
   
