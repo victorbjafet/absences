@@ -61,7 +61,7 @@
       `<script>\n${js}\n</script>\n</body>`
     );
 
-    const pop = window.open('', '_blank', 'width=600,height=700');
+    const pop = window.open('', '_blank', 'width=620,height=750');
     pop.document.write(finalHtml);
     pop.document.close();
   });
