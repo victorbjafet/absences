@@ -17,6 +17,11 @@ const defaultSubFilters = {
             }));
     document.getElementById('subFilters')
             .addEventListener('change', loadAndDisplayData);
+
+    document.getElementById('start-date')
+            .addEventListener('change', loadAndDisplayData);
+    document.getElementById('end-date')
+            .addEventListener('change', loadAndDisplayData);
   
     setupDefaultDates();
     setupSubFilters();
@@ -154,7 +159,7 @@ const defaultSubFilters = {
     if (main==='absences' && subs.length===2 && subs.includes('excused') && subs.includes('unexcused')) {
       let mx = 0;
       Object.values(periods).forEach(pd => { if (pd.dates.length>mx) mx=pd.dates.length; });
-      rem.innerText = `${10 - mx} absences remaining`;
+      rem.innerText = `${10 - mx} full-day absences remaining`;
     } else {
       rem.innerText = '';
     }
