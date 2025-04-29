@@ -59,7 +59,8 @@ https://github.com/user-attachments/assets/1b788057-cdb0-4e08-9615-975944a6644d
 ### iPad (Chrome app) tutorial:
 https://github.com/user-attachments/assets/6c0605d3-6c90-40a1-be35-6f4a8ed8dee1
 
-Note: this works on the iPhone Chrome app too.
+Note 1: this works on the iPhone Chrome app too.
+Note 2: you can also use this bookmarklet in Safari.
 
 
 ## Credits:
