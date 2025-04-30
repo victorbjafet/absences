@@ -25,7 +25,7 @@ https://github.com/user-attachments/assets/1b4223d9-aa73-44a5-b56d-98f192dabf5c
  - Filter absences by activity absences, excused absences, and unexcused absences
  - Filter tardies by excused tardies and unexcused tardies
  - Dropdowns for each period showing total count and relevant entry dates
- - Countdown for full-day absences remaining when viewing excused + unexcused absences (types couting towards exemptions, 10 absences max)
+ - Countdown for full-day absences remaining when viewing excused + unexcused absences (types counting towards exemptions, 10 absences max)
  - Display class names next to period number (view disclaimer below)
 
 
