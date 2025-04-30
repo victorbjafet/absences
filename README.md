@@ -1,5 +1,5 @@
 ﻿# Skyward Absence Scraper
-[CLICK HERE TO JUMP TO INSTRUCTIONS](#creating-and-using-the-bookmarklet)
+[CLICK HERE TO JUMP TO INSTRUCTIONS/TUTORIAL](#creating-and-using-the-bookmarklet)
 <img src="https://github.com/victorbjafet/absences/blob/main/static/screenshot1.png?raw=true" alt="A screenshot of the generated webpage" width="500"/>
 
 This bookmarklet provides insight into your past attendance by extracting Skyward's logs directly from the webpage and categorizing them. It supports filtering by type of entry as well as date range. This bookmarklet is intended for AHS (American Heritage School) students.
