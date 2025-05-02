@@ -1,6 +1,6 @@
 ﻿# Skyward Absence Scraper
  
-<span style="font-size: 20px;">[CLICK HERE TO JUMP TO INSTRUCTIONS/TUTORIALS](#creating-and-using-the-bookmarklet)</span>
+<span style="font-size: 50px;">[CLICK HERE TO JUMP TO INSTRUCTIONS/TUTORIALS](#creating-and-using-the-bookmarklet)</span>
 
 
 <img src="https://github.com/victorbjafet/absences/blob/main/static/screenshot1.png?raw=true" alt="A screenshot of the generated webpage" width="500"/>
