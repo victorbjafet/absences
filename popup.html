@@ -1,24 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Skyward Attendance Scraper</title>
     <style>
+        html {
+            min-height: 100%;
+            /* on html instead of body so the gradient doesn't repeat in bands on short pages */
+            background: linear-gradient(to bottom, #e8f0fc, #ffffff) no-repeat;
+        }
+
         body {
-            width: 600px;
-            margin: 10px auto;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 10px 12px 16px;
             font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #e8f0fc, #ffffff);
+            color: #333;
             text-align: center; /* center everything by default */
         }
 
+        header {
+            position: relative;
+        }
+
         h2 {
-            margin-bottom: 10px;
+            margin: 4px 40px 10px;
             text-align: center;
+        }
+
+        /* styled like Skyward's buttons */
+        #close {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border: 1px solid #b4c1ce;
+            border-radius: 5px;
+            background: linear-gradient(to bottom, #fbfdff, #e4e7e9);
+            color: #1a5da0;
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        #close:hover {
+            background: #dce6f7;
+        }
+
+        /* styled like the student tab above Skyward's attendance table */
+        #student {
+            display: inline-block;
+            margin-bottom: 10px;
+            padding: 3px 9px;
+            background: #f8f8f8;
+            border: 1px solid #d4d4d4;
+            border-radius: 0 8px 0 0;
+            color: #444;
+            font-size: 12px;
+        }
+
+        #student[hidden] {
+            display: none;
+        }
+
+        #student select {
+            font: inherit;
+            color: inherit;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
         }
 
         .date-section {
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 10px;
         }
@@ -26,12 +85,18 @@
         input[type='date'] {
             padding: 5px;
             width: 140px;
+            font: inherit;
+            font-size: 14px;
+            border: 1px solid #b4c1ce;
+            border-radius: 4px;
+            background: #ffffff;
         }
 
         .filter-section {
             background: #ffffff;
-            padding: 10px;
+            padding: 10px 14px;
             margin-bottom: 10px;
+            border: 1px solid #d4d4d4;
             border-radius: 8px;
             display: inline-block;
             text-align: left;
@@ -44,13 +109,14 @@
         .filters-group {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 6px 15px;
             flex-wrap: wrap;
             margin-bottom: 10px;
         }
 
         label {
             margin-right: 5px;
+            cursor: pointer;
         }
 
         #show-class-names {
@@ -59,45 +125,144 @@
 
         #absences-remaining {
             font-size: 17px;
+            font-weight: bold;
             margin: 10px 0;
+            color: #1b63aa;
+        }
+
+        #absences-remaining.warn {
+            color: #b36b00;
+        }
+
+        #absences-remaining.danger {
+            color: #a80707;
+        }
+
+        #absences-remaining:empty {
+            display: none;
         }
 
         .period-button {
-            width: 90%;
-            max-width: 550px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
             text-align: left;
-            padding: 8px;
+            padding: 10px 12px;
+            margin: 6px 0 0;
             background-color: #ffffff;
-            border: 1px solid #ccc;
+            border: 1px solid #d4d4d4;
             border-radius: 5px;
+            color: #333;
+            font: inherit;
+            font-size: 14px;
             cursor: pointer;
-            margin: 5px auto;
-            transition: all 0.3s ease;
+            transition: background-color 0.2s ease;
         }
 
         .period-button:hover {
             background-color: #dce6f7;
         }
 
+        .period-button[aria-expanded="true"] {
+            border-radius: 5px 5px 0 0;
+        }
+
+        .caret {
+            color: #1b63aa;
+            font-size: 10px;
+            transition: transform 0.2s ease;
+        }
+
+        .period-button[aria-expanded="true"] .caret {
+            transform: rotate(90deg);
+        }
+
+        .period-name {
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .class-name {
+            color: #666;
+        }
+
+        .count {
+            margin-left: auto;
+            padding-left: 8px;
+            white-space: nowrap;
+            color: #1b63aa;
+            font-weight: bold;
+        }
+
+        /* animates to the list's real height, so long lists never get cut off */
         .dates {
-            margin: 0 auto 10px;
-            font-size: 14px;
-            color: black;
-            overflow: hidden;
-            transition: max-height 0.4s ease-out;
-            max-height: 0;
-            width: 90%;
-            max-width: 550px;
-            text-align: left;
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s ease-out;
         }
 
         .dates.show {
-            max-height: 500px;
+            grid-template-rows: 1fr;
+        }
+
+        .dates ul {
+            min-height: 0;
+            overflow: hidden;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            text-align: left;
+            background: #ffffff;
+            border: 0 solid #d4d4d4;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .dates.show ul {
+            border-width: 0 1px 1px;
+        }
+
+        .dates li {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2px 10px;
+            padding: 6px 12px 6px 30px;
+            font-size: 13px;
+            border-top: 1px solid #eaeef4;
+        }
+
+        .dates li:first-child {
+            border-top: 0;
+        }
+
+        .dates li .why {
+            color: #666;
+        }
+
+        .empty {
+            color: #666;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 420px) {
+            h2 {
+                font-size: 19px;
+            }
+
+            .filter-section {
+                display: block;
+            }
         }
     </style>
 </head>
 <body>
-    <h2>Skyward Attendance Scraper</h2>
+    <header>
+        <h2>Skyward Attendance Scraper</h2>
+        <button id="close" type="button" aria-label="Close" title="Close">&times;</button>
+    </header>
+
+    <div id="student" hidden></div>
 
     <div class="date-section">
         <div>
@@ -119,8 +284,8 @@
         </div>
         <div class="filters-group" id="subFilters"></div>
         <div>
-            <input type="checkbox" id="show-class-names">
-            <label for="show-class-names">Show Class Names (unreliable)</label>
+            <input type="checkbox" id="show-class-names" checked>
+            <label for="show-class-names">Show Class Names</label>
         </div>
     </div>
 

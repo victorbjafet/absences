@@ -1,69 +1,117 @@
 (function init() {
-    // Only run on the Skyward attendance page
-    const allowRe = /^https:\/\/skyward\.iscorp\.com\/scripts\/wsisa\.dll\/WService=wseduamericanheritagefl\/sfattendance001\.w/;
-    if (!allowRe.test(window.location.href)) {
-        alert("This bookmarklet only works on Skyward's attendance history page.");
-        return;
-    }
-
-    // 1) scrape the attendance table & class names
-    const table = document.querySelector('table[id^="grid_attendanceHistory"]');
-    if (!table) {
-      alert('Skyward attendance table not found on this page.');
+    // 1) find the attendance tables (parent accounts get one per student). Checking for the
+    //    tables instead of the URL keeps this working when Skyward moves its pages around
+    const tables = [...document.querySelectorAll('table[id^="grid_attendanceHistory"]')];
+    if (!tables.length) {
+      alert("This bookmarklet only works on Skyward's attendance page. Open the Attendance tab in Skyward and try again.");
       return;
     }
-    const rows = table.querySelectorAll('tr');
-    const missedData = [];
-    for (let i = 1; i < rows.length; i++) {
-      const cols = rows[i].querySelectorAll('td');
-      if (cols.length < 3) continue;
-      missedData.push({
-        date: cols[0].innerText.trim(),
-        attendance: cols[1].innerText.trim(),
-        period: cols[2].innerText.trim()
-      });
+
+    // 2) map each "View Classes" link to its class list. The list lives in the link's click
+    //    handler (an inline script) and has one class per period, in period order
+    const scriptText = [...document.querySelectorAll('script')].map(s => s.textContent).join('\n');
+    const classLists = {};
+    for (const [handler, linkId] of scriptText.matchAll(/viewClassesDialog[\s\S]*?'#([\w-]+)'\)/g)) {
+      const m = handler.match(/html['"]?\s*:\s*'((?:\\.|[^'\\])*)'/);
+      if (!m) continue;
+      const raw = m[1]
+        .replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+        .replace(/\\(.)/g, (_, c) => ({ n: '\n', r: '\r', t: '\t' })[c] || c);
+      const doc = new DOMParser().parseFromString(raw, 'text/html');
+      classLists[linkId] = [...doc.querySelectorAll('a')].map(a => a.textContent.trim());
     }
-    const classNames = [];
-    document.querySelectorAll('script').forEach(script => {
-      const t = script.innerText;
-      if (t.includes('viewClassesDialog') && t.includes('<a')) {
-        const m = t.match(/html:'(.*?)',title:/s);
-        if (m && m[1]) {
-          const raw = m[1]
-            .replace(/\\u0027/g, "'")
-            .replace(/\\u0022/g, '"')
-            .replace(/\\\//g, '/');
-          const d = document.createElement('div');
-          d.innerHTML = raw;
-          d.querySelectorAll('a').forEach(a => classNames.push(a.innerText.trim()));
-        }
-      }
+
+    // 3) scrape each table. textContent (not innerText) so hidden tabs still read correctly
+    const text = el => el ? el.textContent.replace(/\s+/g, ' ').trim() : '';
+    const students = tables.map((table, i) => {
+      // finding columns by header name in case Skyward reorders them
+      const headers = [...table.querySelectorAll('th')].map(th => text(th).toLowerCase());
+      const col = (name, fallback) => {
+        const idx = headers.findIndex(h => h.includes(name));
+        return idx === -1 ? fallback : idx;
+      };
+      const dateCol = col('date', 0), attendanceCol = col('attendance', 1),
+            periodCol = col('period', 2), classCol = col('class', 3);
+
+      const missedData = [];
+      table.querySelectorAll('tr').forEach(row => {
+        const cols = row.querySelectorAll('td');
+        if (cols.length < 3 || !text(cols[dateCol])) return;
+        // single-period rows show the class name directly, multi-period rows show a "View Classes" link
+        const classCell = cols[classCol];
+        const link = classCell && classCell.querySelector('a');
+        let classes = [];
+        if (link && classLists[link.id]) classes = classLists[link.id];
+        else if (text(classCell) && !/view classes/i.test(text(classCell))) classes = [text(classCell)];
+        missedData.push({
+          date: text(cols[dateCol]),
+          attendance: text(cols[attendanceCol]),
+          period: text(cols[periodCol]),
+          classes
+        });
+      });
+
+      // the tab above each table reads like "Name (School)"
+      const tag = table.closest('.gridWrap')?.querySelector('.sfTag');
+      return { name: text(tag) || (tables.length > 1 ? `Student ${i + 1}` : ''), missedData };
     });
-  
-    // 2) stash on the page so popup.js can grab it
-    window._absencesData = { missedData, classNames };
-  
-    // 3) open a popup and load your existing popup.html + popup.js
+
+    // 4) show the viewer in an overlay on top of Skyward. Unlike a popup window it can't be
+    //    blocked and fits on phones, and the iframe keeps Skyward's CSS from leaking into it
+    window._absencesData?.close?.(); // bookmarklet clicked twice
+    const narrow = window.innerWidth < 640;
+    const overlay = document.createElement('div');
+    overlay.id = 'absences-overlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:2147483647;' +
+      'display:flex;align-items:center;justify-content:center;box-sizing:border-box;background:rgba(0,0,0,.4);' +
+      `padding:${narrow ? 0 : 16}px`;
+    const frame = document.createElement('iframe');
+    frame.title = 'Attendance summary';
+    frame.style.cssText = 'width:100%;max-width:640px;height:100%;background:#fff;' + (narrow
+      ? 'border:0'
+      : 'max-height:820px;border:1px solid #b4c1ce;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.3)');
+    frame.srcdoc = '<p style="font:14px arial,sans-serif;text-align:center;margin-top:40px">Loading...</p>';
+    frame.onload = () => frame.focus(); // so Escape and keyboard navigation work right away
+    overlay.append(frame);
+
+    const prevOverflow = document.documentElement.style.overflow;
+    const onKey = e => { if (e.key === 'Escape') close(); };
+    function close() {
+      overlay.remove();
+      document.removeEventListener('keydown', onKey);
+      document.documentElement.style.overflow = prevOverflow;
+      delete window._absencesData;
+    }
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+    document.addEventListener('keydown', onKey);
+    document.documentElement.style.overflow = 'hidden';
+    document.body.append(overlay);
+
+    // 5) stash on the page so popup.js can grab it
+    window._absencesData = { students, close };
+
+    // 6) load popup.html + popup.js into the overlay
     const base = 'https://raw.githubusercontent.com/victorbjafet/absences/main';
-  Promise.all([
-    fetch(`${base}/popup.html`).then(r => r.text()),
-    fetch(`${base}/popup.js`).then(r => r.text())
-  ]).then(([html, js]) => {
-    // remove the old <script src="popup.js"></script>
-    const cleanHtml = html.replace(
-      /<script\s+src=["']popup\.js["']>\s*<\/script>/,
-      ''
-    );
+    const get = path => fetch(`${base}/${path}`).then(r => {
+      if (!r.ok) throw new Error(`${path}: HTTP ${r.status}`);
+      return r.text();
+    });
+    Promise.all([get('popup.html'), get('popup.js')]).then(([html, js]) => {
+      // remove the old <script src="popup.js"></script>
+      const cleanHtml = html.replace(
+        /<script\s+src=["']popup\.js["']>\s*<\/script>/,
+        ''
+      );
 
-    // inject the JS just before </body>
-    const finalHtml = cleanHtml.replace(
-      /<\/body>/i,
-      `<script>\n${js}\n</script>\n</body>`
-    );
+      // inject the JS just before </body>
+      const finalHtml = cleanHtml.replace(
+        /<\/body>/i,
+        `<script>\n${js}\n</script>\n</body>`
+      );
 
-    const pop = window.open('', '_blank', 'width=600,height=700');
-    pop.document.write(finalHtml);
-    pop.document.close();
-  });
+      frame.srcdoc = finalHtml;
+    }).catch(err => {
+      close();
+      alert(`Couldn't load the attendance viewer (${err.message}). Check your connection and try again.`);
+    });
 })();
-  

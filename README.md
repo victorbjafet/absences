@@ -29,12 +29,13 @@ https://github.com/user-attachments/assets/1b4223d9-aa73-44a5-b56d-98f192dabf5c
  - Filter tardies by excused tardies and unexcused tardies
  - Dropdowns for each period showing total count and relevant entry dates
  - Countdown for full-day absences remaining when viewing excused + unexcused absences (types counting towards exemptions, 10 absences max)
- - Display class names next to period number (view disclaimer below)
+ - Display class names next to period number
+ - Works on phones, tablets, and computers
+ - Supports parent accounts with multiple students
 
 
 ## Disclaimers:
- - <b>The class names feature is unstable!</b> In my case, it seems to work 95% of the time, but all tests with other people have yielded messy results. I would recommend refreshing the page and re-running the bookmarklet if it is broken, but if it doesn't fix itself within three tries, ignore it. This issue does not affect the accuracy of the period numbers, just mismatched or missing class names.
- - This only works if each attendance entry is labelled correctly. It is assumed that any entry with the word "Activity" in it is an activity absence, else any entry with "Unexcused" in it is an unexcused absence, else any entry with "Excused" in it is an excused absence, finally falling back into "Unexcused" if none of the criteria are met (although I have never noticed this happening in my case).
+ - This only works if each attendance entry is labelled correctly. Any entry with the word "Tardy" in it is a tardy. Otherwise, it is assumed that any entry with "Unexcused" in it is an unexcused absence, else any entry with "Activity" or "Exempt" in it is an activity absence, else any entry with "Excused" in it is an excused absence, finally falling back into "Unexcused" if none of the criteria are met.
 
 
 ## Creating and using the bookmarklet:
@@ -51,8 +52,7 @@ javascript: fetch("https://raw.githubusercontent.com/victorbjafet/absences/refs/
 ### Using:
  1. Log into Classlink and Skyward.
  2. Navigate to the attendance tab in your Skyward.
- 3. Click on the bookmarklet to run the script.
- 4. If it doesn't work, make sure you allow popups from skyward.iscorp.com, then try again.
+ 3. Click on the bookmarklet to run the script. The results open on top of the Skyward page; click the × (or press Escape) to close them.
 
 
 ### Computer tutorial:
@@ -62,7 +62,7 @@ https://github.com/user-attachments/assets/1b788057-cdb0-4e08-9615-975944a6644d
 ### iPad (Chrome app) tutorial:
 https://github.com/user-attachments/assets/6c0605d3-6c90-40a1-be35-6f4a8ed8dee1
 
-Note 1: this does not work on the iPhone Chrome app because the webpage is structured differently.
+Note 1: this also works in the iPhone Chrome app. To run a bookmarklet there, type the bookmark's name into the address bar and tap it in the suggestions.
 
 Note 2: you can also use this bookmarklet in Safari.
 
