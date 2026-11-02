@@ -1,4 +1,7 @@
 ﻿# Skyward Absence Scraper
+
+> [!NOTE]
+> **Updated November 2, 2026:** Skyward changed its page addresses, which broke the bookmarklet. It's fixed now, and if you already have the bookmark you don't need to change anything. Results now open in a window on top of the Skyward page instead of a separate popup (so you no longer need to allow popups), and it works on phones too. The screenshot and videos below show the older version, but the steps for creating and using the bookmarklet haven't changed, so they're still accurate.
  
 <span style="font-size: 50px;">[CLICK HERE TO JUMP TO INSTRUCTIONS/TUTORIALS](#creating-and-using-the-bookmarklet)</span>
 
@@ -69,5 +72,7 @@ Note 2: you can also use this bookmarklet in Safari.
 
 ## Credits:
 All code created by [me](https://github.com/victorbjafet) almost exclusively using GPT 4o and GPT 4o-mini-high.
+
+Updated in November 2026 (Skyward address fix, phone support, and UI improvements) using Claude Opus 5.5.
 
 Readme based off [edpuzzle-answers](https://github.com/ading2210/edpuzzle-answers/blob/main/README.md).
