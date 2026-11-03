@@ -27,7 +27,7 @@ https://github.com/user-attachments/assets/1b4223d9-aa73-44a5-b56d-98f192dabf5c
  - Intuitive and Skyward-esque GUI
  - No extension required
  - Date range filter (automatically filters by last semester with start date defaulting to the closest 6 month mark)
- - View absences and tardies separately (FYI, at AHS Broward, exemptions are only nullified if you are over 10 absences OR over 10 tardies for a class)
+ - View absences and tardies separately (as of May 2025, at AHS Broward, exemptions are only nullified if you are over 10 absences OR over 10 tardies for a class)
  - Filter absences by activity absences, excused absences, and unexcused absences
  - Filter tardies by excused tardies and unexcused tardies
  - Dropdowns for each period showing total count and relevant entry dates
